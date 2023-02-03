@@ -1,54 +1,43 @@
 <?php
-namespace Laracasts\Behat\Context\Argument;
 
-use \ReflectionClass;
-use Illuminate\Foundation\Application;
+namespace Soulcodex\Behat\Context\Argument;
+
+use Illuminate\Contracts\Foundation\Application;
+use InvalidArgumentException;
+use ReflectionClass;
 use Behat\Behat\Context\Argument\ArgumentResolver;
 
 class LaravelArgumentResolver implements ArgumentResolver
 {
-    /** @var Application Laravel application instance */
-    private $app;
-
-    /**
-     * @param Application $app
-     */
-    public function __construct(Application $app)
+    public function __construct(private Application $app)
     {
-        $this->app = $app;
     }
 
-    /**
-     * Resolves context constructor arguments.
-     *
-     * @param ReflectionClass $classReflection
-     * @param mixed[]         $arguments
-     *
-     * @return mixed[]
-     */
-    public function resolveArguments(ReflectionClass $classReflection, array $arguments)
+    public function resolveArguments(ReflectionClass $classReflection, array $arguments): array
     {
         $resolvedArguments = [];
 
         foreach ($arguments as $key => $argument) {
-            $resolvedArguments[$key] = $this->resolveArgument($argument);
+            $resolvedArguments[$key] = !empty($argument)
+                ? $this->resolveArgument($argument)
+                : null;
         }
 
         return $resolvedArguments;
     }
 
-    /**
-     * Resolve argument
-     *
-     * @param  string $arg
-     * @return object
-     */
-    private function resolveArgument($arg)
+    private function resolveArgument(string $argument): mixed
     {
-        if (substr($arg, 0, 1) === '@') {
-            return $this->app->make(substr($arg, 1));
+        if (!empty($argument) && !str_starts_with($argument, '@')) {
+            return $argument;
         }
 
-        return $arg;
+        if (!empty($argument) && str_starts_with($argument, '@')) {
+            return $this->app->make(substr($argument, 1));
+        }
+
+        throw new InvalidArgumentException(
+            sprintf('Unable to resolve argument / service <%s>', $argument)
+        );
     }
 }

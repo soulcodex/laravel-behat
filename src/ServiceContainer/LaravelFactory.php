@@ -1,6 +1,6 @@
 <?php
 
-namespace Laracasts\Behat\ServiceContainer;
+namespace Soulcodex\Behat\ServiceContainer;
 
 use Behat\MinkExtension\ServiceContainer\Driver\DriverFactory;
 use RuntimeException;
@@ -10,57 +10,37 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class LaravelFactory implements DriverFactory
 {
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDriverName()
+    public function getDriverName(): string
     {
         return 'laravel';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsJavascript()
+    public function supportsJavascript(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configure(ArrayNodeDefinition $builder)
     {
-        //
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildDriver(array $config)
+    public function buildDriver(array $config): Definition
     {
         $this->assertBrowserkitIsAvailable();
 
-        return new Definition('Laracasts\Behat\Driver\KernelDriver', [
+        return new Definition('Soulcodex\Behat\Driver\KernelDriver', [
             new Reference('laravel.app'),
             '%mink.base_url%'
         ]);
     }
 
-    /**
-     * Ensure that BrowserKit is available.
-     *
-     * @throws RuntimeException
-     */
-    private function assertBrowserkitIsAvailable()
+    private function assertBrowserKitIsAvailable()
     {
-        if ( ! class_exists('Behat\Mink\Driver\BrowserKitDriver')) {
+        if (!class_exists('Behat\Mink\Driver\BrowserKitDriver')) {
             throw new RuntimeException(
                 'Install MinkBrowserKitDriver in order to use the laravel driver.'
             );
         }
     }
-
 }
 

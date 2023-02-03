@@ -1,27 +1,28 @@
 <?php
 
-namespace Laracasts\Behat\Context;
+declare(strict_types=1);
+
+namespace Soulcodex\Behat\Context;
 
 use Behat\Behat\Context\Context;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Behat\Mink\Session;
+use Illuminate\Contracts\Foundation\Application;
 
 interface KernelAwareContext extends Context
 {
+    /**
+     * Reboot application on each scenario.
+     *
+     * @param Application $application
+     * @return void
+     */
+    public function reboot(Application $application): void;
 
     /**
-     * Set the kernel instance on the context.
+     * Get current Mink session driver.
      *
-     * @param HttpKernelInterface $kernel
-     * @return mixed
+     * @param string $sessionName
+     * @return Session
      */
-    public function setApp(HttpKernelInterface $kernel);
-
-    /**
-     * Returns the specified session or active session
-     *
-     * @param string|null $name name of the session
-     * @return mixed
-     */
-    public function getSession($name = null);
-
+    public function driverSession(string $sessionName): Session;
 }

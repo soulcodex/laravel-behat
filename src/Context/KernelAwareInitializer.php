@@ -1,59 +1,34 @@
 <?php
 
-namespace Laracasts\Behat\Context;
+namespace Soulcodex\Behat\Context;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\Initializer\ContextInitializer;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
-use Laracasts\Behat\ServiceContainer\LaravelBooter;
+use Illuminate\Contracts\Foundation\Application;
+use Soulcodex\Behat\ServiceContainer\LaravelEnvironmentArranger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class KernelAwareInitializer implements EventSubscriberInterface, ContextInitializer
 {
+    private Context $context;
 
-    /**
-     * The app kernel.
-     *
-     * @var HttpKernelInterface
-     */
-    private $kernel;
-
-    /**
-     * The Behat context.
-     *
-     * @var Context
-     */
-    private $context;
-
-    /**
-     * Construct the initializer.
-     *
-     * @param HttpKernelInterface $kernel
-     */
-    public function __construct(HttpKernelInterface $kernel)
+    public function __construct(private HttpKernelInterface|Application $app)
     {
-        $this->kernel = $kernel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ScenarioTested::AFTER => ['rebootKernel', -15]
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function initializeContext(Context $context)
+    public function initializeContext(Context $context): void
     {
         $this->context = $context;
-
-        $this->setAppOnContext($this->kernel);
+        $this->setAppOnContext();
     }
 
     /**
@@ -62,7 +37,7 @@ class KernelAwareInitializer implements EventSubscriberInterface, ContextInitial
     private function setAppOnContext()
     {
         if ($this->context instanceof KernelAwareContext) {
-            $this->context->setApp($this->kernel);
+            $this->context->reboot($this->app);
         }
     }
 
@@ -71,16 +46,17 @@ class KernelAwareInitializer implements EventSubscriberInterface, ContextInitial
      */
     public function rebootKernel()
     {
-        if ($this->context instanceof KernelAwareContext)
-        {
-            $this->kernel->flush();
+        if ($this->context instanceof KernelAwareContext) {
+            $kernelContextConfiguration = KernelContextConfiguration::fromKernel($this->app);
 
-            $laravel = new LaravelBooter($this->kernel->basePath(), $this->kernel->environmentFile());
+            $laravel = new LaravelEnvironmentArranger(
+                $this->app->basePath(),
+                sprintf('.env.%s', $this->app->environment())
+            );
 
-            $this->context->getSession('laravel')->getDriver()->reboot($this->kernel = $laravel->boot());
-
-            $this->setAppOnContext();
+            $this->context->driverSession('laravel')
+                ->getDriver()
+                ->reboot($this->app = $laravel->boot($kernelContextConfiguration->toArray()));
         }
     }
-
 }

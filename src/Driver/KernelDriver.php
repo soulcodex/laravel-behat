@@ -1,23 +1,22 @@
 <?php
 
-namespace Laracasts\Behat\Driver;
+namespace Soulcodex\Behat\Driver;
 
 use Behat\Mink\Driver\BrowserKitDriver;
-use Symfony\Component\HttpKernel\Client;
+use Symfony\Component\HttpKernel\HttpKernelBrowser as Client;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class KernelDriver extends BrowserKitDriver
 {
-
     /**
      * Create a new KernelDriver.
      *
      * @param HttpKernelInterface $app
-     * @param string|null         $baseUrl
+     * @param string|null $baseUrl
      */
-    public function __construct(HttpKernelInterface $app, $baseUrl = null)
+    public function __construct(HttpKernelInterface $app, private ?string $baseUrl = null)
     {
-        parent::__construct(new Client($app), $baseUrl);
+        parent::__construct(new Client($app), $this->baseUrl);
     }
 
     /**
@@ -26,9 +25,8 @@ class KernelDriver extends BrowserKitDriver
      * @param HttpKernelInterface $app
      * @return KernelDriver
      */
-    public function reboot($app)
+    public function reboot(HttpKernelInterface $app): KernelDriver
     {
-        return $this->__construct($app);
+        return self::__construct($app, $this->baseUrl);
     }
-
 }

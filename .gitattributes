@@ -1,0 +1,8 @@
+* text eol=lf
+*.php text eol=lf
+*.json text eol=lf
+*.lock text eol=lf
+*.zip binary
+CHANGELOG.md export-ignore
+README.md export-ignore
+*.png filter=lfs diff=lfs merge=lfs -text
