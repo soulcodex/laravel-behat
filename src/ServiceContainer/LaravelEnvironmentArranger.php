@@ -4,6 +4,7 @@ namespace Soulcodex\Behat\ServiceContainer;
 
 use Illuminate\Contracts\Foundation\Application;
 use RuntimeException;
+use Soulcodex\Behat\Context\KernelContextConfiguration;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class LaravelEnvironmentArranger
@@ -35,6 +36,14 @@ class LaravelEnvironmentArranger
         $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
 
         $app->make('Illuminate\Http\Request')->capture();
+
+        $app->bind(
+            KernelContextConfiguration::class,
+            fn() => KernelContextConfiguration::fromConfigWithBasePath(
+                $config,
+                $app->basePath()
+            )
+        );
 
         return $app;
     }

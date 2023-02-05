@@ -5,6 +5,7 @@ namespace Soulcodex\Behat\Context;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\Initializer\ContextInitializer;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Foundation\Application;
 use Soulcodex\Behat\ServiceContainer\LaravelEnvironmentArranger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -31,9 +32,6 @@ class KernelAwareInitializer implements EventSubscriberInterface, ContextInitial
         $this->setAppOnContext();
     }
 
-    /**
-     * Set the app kernel to the feature context.
-     */
     private function setAppOnContext()
     {
         if ($this->context instanceof KernelAwareContext) {
@@ -41,22 +39,29 @@ class KernelAwareInitializer implements EventSubscriberInterface, ContextInitial
         }
     }
 
-    /**
-     * After each scenario, reboot the kernel.
-     */
     public function rebootKernel()
     {
         if ($this->context instanceof KernelAwareContext) {
-            $kernelContextConfiguration = KernelContextConfiguration::fromKernel($this->app);
+            $kernelConfig = $this->kernelConfig();
+            $this->app->flush();
 
             $laravel = new LaravelEnvironmentArranger(
-                $this->app->basePath(),
-                sprintf('.env.%s', $this->app->environment())
+                $kernelConfig->basePath(),
+                $kernelConfig->environmentFile()
             );
 
             $this->context->driverSession('laravel')
                 ->getDriver()
-                ->reboot($this->app = $laravel->boot($kernelContextConfiguration->toArray()));
+                ->reboot($this->app = $laravel->boot($kernelConfig->toArray()));
+        }
+    }
+
+    private function kernelConfig(): KernelContextConfiguration
+    {
+        try {
+            return $this->app->make(KernelContextConfiguration::class);
+        } catch (BindingResolutionException) {
+            return KernelContextConfiguration::fromKernel($this->app);
         }
     }
 }
