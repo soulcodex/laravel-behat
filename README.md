@@ -29,8 +29,10 @@ Next, within your project root, create a `behat.yml` file, and add:
 default:
     extensions:
         Soulcodex\Behat:
-            # env_path: .env.behat
-        Behat\MinkExtension:
+            kernel: # Default values
+                bootstrap_path: '/bootstrap/app.php'
+                environment_path: '.env.behat'
+        Behat\MinkExtension: # Default mink extension configuration
             default_session: laravel
             laravel: ~
     
