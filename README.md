@@ -31,7 +31,6 @@ Next, within your project root, create a `behat.yml` file, and add:
 default:
     extensions:
         Soulcodex\Behat:
-            mode: 'browser_kit|kernel'
             kernel: # Default values
                 bootstrap_path: '/bootstrap/app.php'
                 environment_path: '.env.behat'
