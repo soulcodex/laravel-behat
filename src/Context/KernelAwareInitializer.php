@@ -50,7 +50,7 @@ class KernelAwareInitializer implements EventSubscriberInterface, ContextInitial
                 $kernelConfig->environmentFile()
             );
 
-            $this->context->driverSession('laravel')
+            $this->context->session('laravel')
                 ->getDriver()
                 ->reboot($this->app = $laravel->boot($kernelConfig->toArray()));
         }

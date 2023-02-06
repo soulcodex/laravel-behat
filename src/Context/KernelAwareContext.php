@@ -13,10 +13,10 @@ interface KernelAwareContext extends Context
     /**
      * Reboot application on each scenario.
      *
-     * @param Application $application
+     * @param Application $app
      * @return void
      */
-    public function reboot(Application $application): void;
+    public function reboot(Application $app): void;
 
     /**
      * Get current Mink session driver.
@@ -24,5 +24,5 @@ interface KernelAwareContext extends Context
      * @param string $sessionName
      * @return Session
      */
-    public function driverSession(string $sessionName): Session;
+    public function session(string $sessionName): Session;
 }

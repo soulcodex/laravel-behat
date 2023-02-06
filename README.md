@@ -11,7 +11,9 @@
 </tr>
 </table>
 
-# 1. Install Dependencies
+# Getting started
+
+## 1. Install Dependencies
 
 As always, we need to pull in some dependencies through Composer.
 
@@ -21,7 +23,7 @@ composer require behat/behat behat/mink friends-of-behat/mink-extension soulcode
 
 This will give us access to Behat, Mink, and, of course, the Laravel extension.
 
-# 2. Create the Behat.yml Configuration File
+## 2. Create the Behat.yml Configuration File
 
 Next, within your project root, create a `behat.yml` file, and add:
 
@@ -29,13 +31,14 @@ Next, within your project root, create a `behat.yml` file, and add:
 default:
     extensions:
         Soulcodex\Behat:
+            mode: 'browser_kit|kernel'
             kernel: # Default values
                 bootstrap_path: '/bootstrap/app.php'
                 environment_path: '.env.behat'
         Behat\MinkExtension: # Default mink extension configuration
             default_session: laravel
             laravel: ~
-    
+
     # Your test suites here
     suites:
         user:
@@ -51,19 +54,74 @@ be referenced from your tests. By default, it'll look for a `.env.behat` file.
 This file should, like the standard `.env` file in your project root, contain any special environment variables
 for your tests (such as a special acceptance test-specific database).
 
-# 3. Setting up FeatureContext
+## 3. Setting up a new context
 
-Run, from the root of your app
+Create a new one context in the directory specified in the `paths` configuration property using the base context class
+like this:
 
-~~~
-vendor/bin/behat --init 
-~~~
+_behat.yaml_
+```yaml
+suites:
+    user:
+        paths: [ '%paths.base%/app/User/Test/Feature/' ]
+        # The context needed by your features tests
+        contexts:
+            -   App\User\Test\Feature\UserContext:
+                    userRepository: '@App\User\Infrastructure\Persistence\Eloquent\EloquentMySqlUserRepository'
+```
+_app/User/Test/Feature/UserContext.php_
+```php
+<?php
 
-More documentation ...
+declare(strict_types=1);
 
-## FAQ
+namespace App\User\Test\Feature;
+
+use App\User\Domain\UserRepository;
+use Soulcodex\Behat\Addon\Context;
+
+final class UserContext extends Context
+{
+    public function __construct(private UserRepository $userRepository)
+    {
+    }
+
+    /**
+     * @Given I send a request to :url
+     */
+    public function iSendARequestTo(string $url): void
+    {
+    }
+}
+```
+
+Start writing your features test with Behat. ¡Happy coding!
+
+## FAQ ❓
+
+### Will be released new functionalities ?
+Yes, of course but i need help and support in order to maintain and upscale the package according this bullet points:
+
+* Transform this package in more than a simple behat setup package.
+* Improve and make easier the developer life working in favor of *Plug & Play* philosophy.
+* Push in favor of BDD pattern as great way/approach to have aligned business and technical layers.
+
+### Could be possible contribute to help and maintain this package?
+Yes, contact with me through [email](mailto:robertojosegn55@gmail.com) with subject `Behat Extension - Contributor` and 
+send me the following data:
+
+* Full name 👋
+* GitHub link 💡 :octocat:
+* LinkedIn to connect 😁
+* The most important thing ➡️ **ideas** 💡
 
 ### I'm getting a "PHP Fatal error: Maximum function nesting level of '100' reached, aborting!" error.
 
-Sounds like you're using Xdebug. [Increase the max nesting level](http://xdebug.org/docs/all_settings#max_nesting_level)
-.
+Sounds like you're using Xdebug. [Increase the max nesting level](http://xdebug.org/docs/all_settings#max_nesting_level).
+
+## How contribute / things pending to do 📄
+- [ ] Add test coverage for all laravel version matrix using GitHub Actions.
+- [ ] Automatize test and package release to packagist.
+- [ ] Add usefully traits to give `Plug & Play` tools.
+- [ ] Add `mode` to configuration to let choose between `KernelBrowser` or `SeleniumBrowser` implementation.
+- [ ] Create or amplify a base context for `api` and `web` approaches.

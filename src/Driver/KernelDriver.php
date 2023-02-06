@@ -27,6 +27,6 @@ class KernelDriver extends BrowserKitDriver
      */
     public function reboot(HttpKernelInterface $app): KernelDriver
     {
-        return self::__construct($app, $this->baseUrl);
+        return new self($app, $this->baseUrl);
     }
 }
