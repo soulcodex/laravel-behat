@@ -43,7 +43,6 @@ class KernelAwareInitializer implements EventSubscriberInterface, ContextInitial
     {
         if ($this->context instanceof KernelAwareContext) {
             $kernelConfig = $this->kernelConfig();
-            $this->app->flush();
 
             $laravel = new LaravelEnvironmentArranger(
                 $kernelConfig->basePath(),

@@ -55,20 +55,24 @@ for your tests (such as a special acceptance test-specific database).
 
 ## 3. Setting up a new context
 
-Create a new one context in the directory specified in the `paths` configuration property using the base context class
-like this:
+Create a new one context in the directory specified in the `paths` configuration property **using**
+[the base context](src/Addon/Context.php) and register the [RootContext class](src/Addon/RootContext.php) like this:
 
 _behat.yaml_
+
 ```yaml
 suites:
     user:
         paths: [ '%paths.base%/app/User/Test/Feature/' ]
         # The context needed by your features tests
         contexts:
+            -   Soulcodex\Behat\Addon\RootContext: ~
             -   App\User\Test\Feature\UserContext:
                     userRepository: '@App\User\Infrastructure\Persistence\Eloquent\EloquentMySqlUserRepository'
 ```
+
 _app/User/Test/Feature/UserContext.php_
+
 ```php
 <?php
 
@@ -99,6 +103,7 @@ Start writing your features test with Behat. ¡Happy coding!
 ## FAQ ❓
 
 ### Will be released new functionalities ?
+
 Yes, of course but i need help and support in order to maintain and upscale the package according this bullet points:
 
 * Transform this package in more than a simple behat setup package.
@@ -106,7 +111,8 @@ Yes, of course but i need help and support in order to maintain and upscale the 
 * Push in favor of BDD pattern as great way/approach to have aligned business and technical layers.
 
 ### Could be possible contribute to help and maintain this package?
-Yes, contact with me through [email](mailto:robertojosegn55@gmail.com) with subject `Behat Extension - Contributor` and 
+
+Yes, contact with me through [email](mailto:robertojosegn55@gmail.com) with subject `Behat Extension - Contributor` and
 send me the following data:
 
 * Full name 👋
@@ -116,11 +122,15 @@ send me the following data:
 
 ### I'm getting a "PHP Fatal error: Maximum function nesting level of '100' reached, aborting!" error.
 
-Sounds like you're using Xdebug. [Increase the max nesting level](http://xdebug.org/docs/all_settings#max_nesting_level).
+Sounds like you're using
+Xdebug. [Increase the max nesting level](http://xdebug.org/docs/all_settings#max_nesting_level).
 
 ## How contribute / things pending to do 📄
+
+- [ ] Implement a good and readable CHANGELOG using
+  this [library](https://github.com/marcocesarato/php-conventional-changelog) or another one.
 - [ ] Add test coverage for all laravel version matrix using GitHub Actions.
 - [ ] Automatize test and package release to packagist.
 - [ ] Add usefully traits to give `Plug & Play` tools.
-- [ ] Add `mode` to configuration to let choose between `KernelBrowser` or `SeleniumBrowser` implementation.
+- [ ] Add `mode` to configuration to let choose between `KernelBrowser (default)` or `SeleniumBrowser` implementation.
 - [ ] Create or amplify a base context for `api` and `web` approaches.
