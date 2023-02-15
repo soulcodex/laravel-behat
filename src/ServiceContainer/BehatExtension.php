@@ -6,6 +6,7 @@ use Behat\MinkExtension\ServiceContainer\MinkExtension;
 use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Illuminate\Contracts\Foundation\Application;
+use Soulcodex\Behat\Context\KernelContextConfiguration;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Behat\Behat\Context\ServiceContainer\ContextExtension;
@@ -52,6 +53,7 @@ class BehatExtension implements Extension
     {
         $app = $this->loadLaravel($container, $config);
 
+        $this->loadKernelConfiguration($container, $app, $config);
         $this->loadInitializer($container, $app);
         $this->loadLaravelArgumentResolver($container);
     }
@@ -70,7 +72,10 @@ class BehatExtension implements Extension
 
     private function loadInitializer(ContainerBuilder $container, Application $app): void
     {
-        $definition = new Definition('Soulcodex\Behat\Context\KernelAwareInitializer', [$app]);
+        $definition = new Definition(
+            'Soulcodex\Behat\Context\KernelAwareInitializer',
+            [$app, new Reference('laravel.behat_extension.kernel_context_config')]
+        );
 
         $definition->addTag(EventDispatcherExtension::SUBSCRIBER_TAG, ['priority' => 0]);
         $definition->addTag(ContextExtension::INITIALIZER_TAG, ['priority' => 0]);
@@ -86,5 +91,17 @@ class BehatExtension implements Extension
 
         $definition->addTag(ContextExtension::ARGUMENT_RESOLVER_TAG, ['priority' => 0]);
         $container->setDefinition('laravel.context.argument.service_resolver', $definition);
+    }
+
+    private function loadKernelConfiguration(ContainerBuilder $container, Application $app, array $config)
+    {
+        $definition = new Definition(
+            'Soulcodex\Behat\Context\KernelContextConfiguration',
+            [$config, $app->basePath()]
+        );
+
+        $definition->setFactory([KernelContextConfiguration::class, 'fromConfigWithBasePath']);
+
+        $container->setDefinition('laravel.behat_extension.kernel_context_config', $definition);
     }
 }
