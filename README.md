@@ -94,6 +94,8 @@ final class UserContext extends Context
      */
     public function iSendARequestTo(string $url): void
     {
+        $session = $this->session(); // The current mink session
+        $session->visit($url); // Perform an action using the mink session 
     }
 }
 ```
@@ -127,7 +129,7 @@ Xdebug. [Increase the max nesting level](http://xdebug.org/docs/all_settings#max
 
 ## How contribute / things pending to do 📄
 
-- [ ] Implement a good and readable CHANGELOG using
+- [X] Implement a good and readable CHANGELOG using
   this [library](https://github.com/marcocesarato/php-conventional-changelog) or another one.
 - [ ] Add test coverage for all laravel version matrix using GitHub Actions.
 - [ ] Automatize test and package release to packagist.

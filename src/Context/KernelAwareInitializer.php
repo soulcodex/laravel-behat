@@ -17,9 +17,7 @@ class KernelAwareInitializer implements EventSubscriberInterface, ContextInitial
     public function __construct(
         private HttpKernelInterface|Application $app,
         private KernelContextConfiguration $kernelConfiguration
-    )
-    {
-    }
+    ) {}
 
     public static function getSubscribedEvents(): array
     {
@@ -44,16 +42,17 @@ class KernelAwareInitializer implements EventSubscriberInterface, ContextInitial
     public function rebootKernel()
     {
         if ($this->context instanceof KernelAwareMinkContext) {
-            $this->app->flush();
-
             $laravel = new LaravelEnvironmentArranger(
                 $this->kernelConfiguration->basePath(),
                 $this->kernelConfiguration->environmentFile()
             );
 
             $this->context->minkSession('laravel')
+            $this->app = $laravel->boot($this->kernelConfiguration->toArray());
+
+            $this->context->minkSession('laravel')
                 ->getDriver()
-                ->reboot($this->app = $laravel->boot($this->kernelConfiguration->toArray()));
+                ->reboot($this->app);
 
             $this->setAppOnContext();
         }
