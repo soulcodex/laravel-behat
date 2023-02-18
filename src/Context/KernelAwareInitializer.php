@@ -5,7 +5,6 @@ namespace Soulcodex\Behat\Context;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\Initializer\ContextInitializer;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Foundation\Application;
 use Soulcodex\Behat\ServiceContainer\LaravelEnvironmentArranger;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -15,9 +14,10 @@ class KernelAwareInitializer implements EventSubscriberInterface, ContextInitial
 {
     private Context $context;
 
-    public function __construct(private HttpKernelInterface|Application $app)
-    {
-    }
+    public function __construct(
+        private HttpKernelInterface|Application $app,
+        private KernelContextConfiguration $kernelConfiguration
+    ) {}
 
     public static function getSubscribedEvents(): array
     {
@@ -34,34 +34,26 @@ class KernelAwareInitializer implements EventSubscriberInterface, ContextInitial
 
     private function setAppOnContext()
     {
-        if ($this->context instanceof KernelAwareContext) {
+        if ($this->context instanceof KernelAwareMinkContext) {
             $this->context->reboot($this->app);
         }
     }
 
     public function rebootKernel()
     {
-        if ($this->context instanceof KernelAwareContext) {
-            $kernelConfig = $this->kernelConfig();
-            $this->app->flush();
-
+        if ($this->context instanceof KernelAwareMinkContext) {
             $laravel = new LaravelEnvironmentArranger(
-                $kernelConfig->basePath(),
-                $kernelConfig->environmentFile()
+                $this->kernelConfiguration->basePath(),
+                $this->kernelConfiguration->environmentFile()
             );
 
-            $this->context->session('laravel')
-                ->getDriver()
-                ->reboot($this->app = $laravel->boot($kernelConfig->toArray()));
-        }
-    }
+            $this->app = $laravel->boot($this->kernelConfiguration->toArray());
 
-    private function kernelConfig(): KernelContextConfiguration
-    {
-        try {
-            return $this->app->make(KernelContextConfiguration::class);
-        } catch (BindingResolutionException) {
-            return KernelContextConfiguration::fromKernel($this->app);
+            $this->context->minkSession('laravel')
+                ->getDriver()
+                ->reboot($this->app);
+
+            $this->setAppOnContext();
         }
     }
 }

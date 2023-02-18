@@ -8,7 +8,7 @@ use Behat\Behat\Context\Context;
 use Behat\Mink\Session;
 use Illuminate\Contracts\Foundation\Application;
 
-interface KernelAwareContext extends Context
+interface KernelAwareMinkContext extends Context
 {
     /**
      * Reboot application on each scenario.
@@ -24,5 +24,5 @@ interface KernelAwareContext extends Context
      * @param string $sessionName
      * @return Session
      */
-    public function session(string $sessionName): Session;
+    public function minkSession(string $sessionName): Session;
 }

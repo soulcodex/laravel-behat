@@ -1,35 +1,52 @@
 {
-  "name": "soulcodex/laravel-behat",
-  "type": "behat-extension",
-  "description": "Laravel Extension for Behat",
-  "keywords": [
-    "laravel",
-    "behat",
-    "extension",
-    "bdd"
-  ],
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Roberto García",
-      "email": "info@soulcodex.es"
-    }
-  ],
-  "autoload": {
-    "psr-4": {
-      "Soulcodex\\Behat\\": "src"
-    }
-  },
-  "require": {
-    "php": ">=8.0",
-    "behat/behat": "^3.0",
-    "behat/mink-browserkit-driver": "^2.1",
-    "friends-of-behat/mink-extension": "^2.7",
-    "illuminate/contracts": "^8.0|^9.0",
-    "illuminate/support": "^8.0|^9.0"
-  },
-  "require-dev": {
-    "symfony/symfony": "^6.2",
-    "symfony/http-kernel": "^6.2"
-  }
+    "name": "soulcodex/laravel-behat",
+    "type": "behat-extension",
+    "description": "Laravel Extension for easy integration with Behat",
+    "keywords": [
+        "laravel",
+        "behat",
+        "extension",
+        "bdd"
+    ],
+    "homepage": "https://github.com/soulcodex/laravel-behat",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Roberto Garc\u00eda",
+            "email": "info@soulcodex.es",
+            "role": "Owner"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Soulcodex\\Behat\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Soulcodex\\Behat\\Tests\\": "tests"
+        }
+    },
+    "require": {
+        "php": "^8.0|^8.1",
+        "behat/behat": "^3.0",
+        "behat/mink-browserkit-driver": "^2.1",
+        "friends-of-behat/mink-extension": "^2.7",
+        "illuminate/contracts": "^8.0|^9.0",
+        "illuminate/support": "^8.0|^9.0",
+        "symfony/http-kernel": "^6.2",
+        "symfony/event-dispatcher": "^6.2"
+    },
+    "require-dev": {
+        "marcocesarato/php-conventional-changelog": "^1.16"
+    },
+    "scripts": {
+        "changelog": "conventional-changelog",
+        "release": "conventional-changelog --commit",
+        "release:patch": "conventional-changelog --patch --commit",
+        "release:minor": "conventional-changelog --minor --commit",
+        "release:major": "conventional-changelog --major --commit"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
