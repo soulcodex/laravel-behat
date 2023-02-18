@@ -17,15 +17,6 @@ final class KernelContextConfiguration implements Arrayable
     ) {
     }
 
-    public static function fromKernel(HttpKernelInterface|Application $application): self
-    {
-        return new self(
-            $application->basePath(),
-            $application->bootstrapPath(),
-            sprintf('.env.%s', $application->environment())
-        );
-    }
-
     public static function fromConfigWithBasePath(array $config, string $basePath): self
     {
         return new self(
