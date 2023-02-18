@@ -32,8 +32,8 @@
         "behat/behat": "^3.0",
         "behat/mink-browserkit-driver": "^2.1",
         "friends-of-behat/mink-extension": "^2.7",
-        "illuminate/contracts": "^8.0|^9.0",
-        "illuminate/support": "^8.0|^9.0",
+        "illuminate/contracts": "^8.0|^9.0|^10.0",
+        "illuminate/support": "^8.0|^9.0|^10.0",
         "symfony/http-kernel": "^6.2",
         "symfony/event-dispatcher": "^6.2"
     },
@@ -49,5 +49,5 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "version": "1.0.2"
+    "version": "1.0.3"
 }
