@@ -94,8 +94,7 @@ final class UserContext extends Context
      */
     public function iSendARequestTo(string $url): void
     {
-        $session = $this->session(); // The current mink session
-        $session->visit($url); // Perform an action using the mink session 
+        $this->visitUrl($url); // Perform an action using the mink session 
     }
 }
 ```
@@ -103,6 +102,48 @@ final class UserContext extends Context
 Note: Its recommended use from time been 
 
 Start writing your features test with Behat. ¡Happy coding!
+
+## Features 🎁
+
+#### 💫 Plug & Play philosophy, just create you context, extends from [base context](src/Addon/Context.php) and start your feature context.
+
+```php
+<?php
+
+use Soulcodex\Behat\Addon\Context;
+
+final class MyMarvelousContext extends Context
+{
+    /**
+     * @Given I do a marvelous action in my application
+     */
+    public function iDoAMarvelousActionInMyApp(): void
+    {
+        $this->doMarvelousThings();
+    }
+}
+```
+
+#### 💫 Direct access to mink session and shortcut to perform `GET` request to specific url
+
+```php
+$this->visitUrl($url); // Perform GET request to specific URI
+$this->session(); // Access to the mink session to perform actions
+```
+
+#### 💫 Runtime access to the container to get dependencies or do anything
+
+```php
+$this->container(); // Get laravel application container access
+```
+
+#### 💫 PHPUnit assertions from your context
+
+```php
+$this->assertSame(...);
+$this->assertEquals(...);
+$this->assertInstanceOf(...);
+```
 
 ## FAQ ❓
 
@@ -135,6 +176,6 @@ Xdebug. [Increase the max nesting level](http://xdebug.org/docs/all_settings#max
   this [library](https://github.com/marcocesarato/php-conventional-changelog) or another one.
 - [ ] Add test coverage for all laravel version matrix using GitHub Actions.
 - [ ] Automatize test and package release to packagist.
-- [ ] Add usefully traits to give `Plug & Play` tools.
+- [ ] Add usefully traits to give `Plug & Play` tools. **⏱ _in progress_**
 - [ ] Add `mode` to configuration to let choose between `KernelBrowser (default)` or `SeleniumBrowser` implementation.
 - [ ] Create or amplify a base context for `api` and `web` approaches.
