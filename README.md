@@ -99,6 +99,8 @@ final class UserContext extends Context
 }
 ```
 
+Note: Its recommended use from time been 
+
 Start writing your features test with Behat. ¡Happy coding!
 
 ## Features 🎁
