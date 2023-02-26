@@ -47,7 +47,6 @@ class KernelAwareInitializer implements EventSubscriberInterface, ContextInitial
                 $this->kernelConfiguration->environmentFile()
             );
 
-            $this->context->minkSession('laravel')
             $this->app = $laravel->boot($this->kernelConfiguration->toArray());
 
             $this->context->minkSession('laravel')

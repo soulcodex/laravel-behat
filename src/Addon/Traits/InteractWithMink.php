@@ -2,20 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Soulcodex\Behat\Addon;
+namespace Soulcodex\Behat\Addon\Traits;
 
 use Behat\Mink\Session;
-use Illuminate\Contracts\Foundation\Application;
 
-trait InteractWithKernelContext
+trait InteractWithMink
 {
-    protected Application $app;
-
-    public function reboot(Application $app): void
-    {
-        $this->app = $app;
-    }
-
     public function minkSession(string $sessionName): Session
     {
         return $this->getMink()->getSession($sessionName);
@@ -24,5 +16,10 @@ trait InteractWithKernelContext
     public function session(): Session
     {
         return $this->minkSession('laravel');
+    }
+
+    public function visitUrl(string $url): void
+    {
+        $this->session()->visit($url);
     }
 }
