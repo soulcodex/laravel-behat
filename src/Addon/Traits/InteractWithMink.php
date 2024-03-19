@@ -15,11 +15,21 @@ trait InteractWithMink
 
     public function session(): Session
     {
-        return $this->minkSession('laravel');
+        return $this->minkSession($this->sessionKey());
     }
 
     public function visitUrl(string $url): void
     {
         $this->session()->visit($url);
+    }
+
+    public function fillField(string $field, mixed $value): void
+    {
+        parent::fillField($field, $value);
+    }
+
+    private function sessionKey(): string
+    {
+        return 'laravel';
     }
 }
