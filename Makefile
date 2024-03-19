@@ -17,6 +17,10 @@ help: ## Show all available commands with explanations
 composer-install: ## Install all composer dependencies
 	${DOCKER_RUN} --rm --interactive --tty --volume ${CURRENT_DIR}:/app --user ${USER}:${GROUP} composer install
 
+.PHONY=composer-update
+composer-update: ## Update all composer dependencies
+	${DOCKER_RUN} --rm --interactive --tty --volume ${CURRENT_DIR}:/app --user ${USER}:${GROUP} composer update
+
 .PHONY=composer-req
 composer-req: ## Add new composer dependency
 	if [ ! -v PACKAGE ]; then printf ${RED}"PACKAGE not specified... PACKAGE=<package-name> make composer-req"${NC}"\nº"; exit 1; fi

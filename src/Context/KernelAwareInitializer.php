@@ -12,12 +12,16 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class KernelAwareInitializer implements EventSubscriberInterface, ContextInitializer
 {
+    private const MINK_SESSION_NAME = 'laravel';
+
     private Context $context;
 
     public function __construct(
         private HttpKernelInterface|Application $app,
-        private KernelContextConfiguration $kernelConfiguration
-    ) {}
+        private KernelContextConfiguration      $kernelConfiguration
+    )
+    {
+    }
 
     public static function getSubscribedEvents(): array
     {
@@ -49,7 +53,7 @@ class KernelAwareInitializer implements EventSubscriberInterface, ContextInitial
 
             $this->app = $laravel->boot($this->kernelConfiguration->toArray());
 
-            $this->context->minkSession('laravel')
+            $this->context->minkSession(self::MINK_SESSION_NAME)
                 ->getDriver()
                 ->reboot($this->app);
 
